@@ -1,0 +1,36 @@
+# ---------------------------------------------------------------------------
+# hl-scalper configuration.  Everything that decides risk lives here, not in
+# the code, so it can be reviewed without reading Python.
+# ---------------------------------------------------------------------------
+
+account:
+  equity_usd: 50.0          # what you actually funded
+  network: testnet          # testnet | mainnet  -- change LAST, on purpose
+
+# Markets are chosen by spread, not by name recognition: the quoted spread has
+# to clear the 3 bps maker round-trip before a passive quote can earn anything.
+markets:
+  min_spread_bps: 4.0       # skip anything tighter than this
+  min_daily_volume: 2000000 # $ -- thin books gap; this is the floor
+  max_concurrent: 2         # how many symbols may hold inventory at once
+  candidates: [PENDLE, ETC, ATOM, DASH, WLD, DOT, CRV, FARTCOIN]
+
+quoting:
+  order_notional: 12.0      # $ per side. Exchange minimum is $10.
+  max_leverage: 2.0         # hard ceiling regardless of what the venue allows
+  edge_bps: 1.5             # required expected edge after fees to post a quote
+  requote_bps: 1.0          # move the quote once mid drifts this far
+  max_quote_age_s: 20       # stale quotes get pulled
+
+risk:
+  max_position_usd: 25.0    # inventory cap per symbol
+  max_gross_usd: 40.0       # total notional across all symbols
+  daily_loss_limit_usd: 5.0 # 10% of equity -> flatten and stop for the day
+  max_drawdown_usd: 12.5    # 25% of equity -> stop permanently, needs review
+  stop_loss_bps: 40         # per-position hard stop (taker exit)
+  inventory_skew: true      # bias quotes to work inventory back toward flat
+  kill_switch_file: .halt   # create this file to flatten and stop, any time
+
+fees:
+  maker_bps: 1.5
+  taker_bps: 4.5

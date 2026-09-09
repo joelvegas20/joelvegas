@@ -1,0 +1,8 @@
+.env
+.halt
+data/*.json
+data/archive/
+logs/
+__pycache__/
+*.pyc
+state.json
