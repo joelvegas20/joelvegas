@@ -28,6 +28,33 @@ cp .env.example .env      # then fill it in
 An API wallet can trade but **cannot withdraw**. Never put a main-wallet seed
 phrase or private key anywhere in this repo.
 
+## Running it on your own machine
+
+```sh
+git clone <this repo> && cd hl-scalper
+pip install hyperliquid-python-sdk websockets pyyaml
+
+# Phase 1 and 2 run together, in two terminals. Neither needs a key or funds.
+python3 src/collector.py          # terminal 1 — archives live data
+python3 src/paper_mm.py           # terminal 2 — paper trades on live prices
+```
+
+Leave both running as long as the machine is awake; they reconnect on their own
+after a dropped socket or a laptop sleep. Progress survives restarts —
+`state_paper.json` holds P&L and positions, and the archive appends per day.
+
+Check on it whenever you like:
+
+```sh
+tail -f logs/paper.log                    # live fills and status
+grep -c FILL logs/paper.log               # how many fills so far
+touch .halt                               # stop; delete the file to resume
+```
+
+After 14 days, review against the Phase 2 gate in PLAN.md §4 — net positive,
+>=200 fills, drawdown under $12.50. **The first 16-minute run was net negative
+before fees** (PLAN.md §3a), so expect this gate to be genuinely hard to pass.
+
 ## Phases
 
 Each phase has a gate in PLAN.md §4. Do not skip them — `live_mm.py` refuses

@@ -91,6 +91,26 @@ If the goal is profit rather than education, the two changes that matter far
 more than any strategy tweak are: (a) fund $500–1,000 so position sizing has
 room, and (b) stake HYPE for the fee discount (up to 40% off).
 
+## 3a. First paper run — what actually happened
+
+A 16-minute paper session against the live book, quoting 12 markets:
+
+```
+fills          13        (5 completed round trips)
+gross P&L      -$0.0587  <-- negative BEFORE fees
+fees paid       $0.0234
+NET            -$0.0821  =  -$7.39/day  =  -14.8% of equity per day
+```
+
+Sixteen minutes is far too short to conclude anything, and it is reported here
+because of *which* number is negative: **gross P&L, before a cent of fees.**
+That is adverse selection, the risk named in section 3 — passive quotes get
+filled precisely when the market is about to move against them. Fees then make
+a bad number worse.
+
+This is the specific thing Phase 2 exists to measure over 14 days rather than
+16 minutes. Treat it as the null hypothesis to be disproved, not as a result.
+
 ## 4. Phased plan — each phase has a gate
 
 Nothing advances to the next phase until its gate passes. The gates are the
