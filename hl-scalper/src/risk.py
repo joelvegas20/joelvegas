@@ -59,11 +59,21 @@ class RiskManager:
             raise Halt(self.halted)
 
     def can_open(self, coin, add_notional):
-        """True if adding `add_notional` (signed) keeps us inside every limit."""
+        """True if adding `add_notional` (signed) keeps us inside every limit.
+
+        An order that shrinks an existing position is always allowed: it lowers
+        risk on every axis. Without this carve-out the gross-exposure cap
+        deadlocks the book -- once inventory fills the cap, the quote that would
+        work it back to flat is blocked along with everything else, leaving the
+        position stranded until the stop or the kill switch fires.
+        """
         self._rollover()
         if self.halted:
             return False, self.halted
-        new = self.positions.get(coin, 0.0) + add_notional
+        cur = self.positions.get(coin, 0.0)
+        new = cur + add_notional
+        if abs(new) < abs(cur):
+            return True, "reducing"
         if abs(new) > self.r["max_position_usd"]:
             return False, "max_position"
         gross = sum(abs(v) for k, v in self.positions.items() if k != coin) + abs(new)
